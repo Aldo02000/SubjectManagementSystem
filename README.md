@@ -1,1 +1,1 @@
-# SubjectMangementSystem
+# SubjectManagementSystem
