@@ -7,11 +7,11 @@ const flash = require('connect-flash');
 const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 
-app.set('views', path.join(__dirname, '../Client/views'));
+app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: false }))
 app.use(flash());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, '../Client/views')));
+app.use(express.static(path.join(__dirname, 'views')));
 app.engine('hbs', exphbs.engine({ extname: '.hbs' }));
 app.set('view engine', 'hbs');
 
