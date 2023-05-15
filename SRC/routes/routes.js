@@ -13,6 +13,7 @@ router.post('/adduser', userController.adduserPost);
 router.get('/edituser/:ID', userController.edituser);
 router.post('/edituser/:ID', userController.edituserPost);
 router.get('/:ID', userController.delete);
+router.post('/admin', userController.find);
 
 
 module.exports = router;

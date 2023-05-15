@@ -58,9 +58,25 @@ exports.welcome = (req, res, next) => {
     res.render("welcome.ejs", { username: req.user.NameOfUser, role: req.user.RoleOfUser });
 };
 
+
+
 exports.adduser = (req, res) => {
     res.render('addUser');
 }
+
+exports.find = (req, res, next) => {
+
+    let searchTerm = req.body.search;
+
+    connection.query('SELECT * FROM User WHERE NameOfUser LIKE ? OR Id LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, results) => {
+        if (!err) {
+            res.render('home', { results });
+        } else {
+            console.log(err);
+            next(err);
+        }
+    });
+};
 
 exports.admin = (req, res, next) => {
     if (!req.user || !isAdmin) {
