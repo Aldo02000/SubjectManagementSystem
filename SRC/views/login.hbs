@@ -15,9 +15,9 @@
         <input type="password" id="password" name="password" required>
         <input type="submit" value="Login">
       </form>
-      <% if (message) { %>
-        <p><%= message %></p>
-      <% } %>
+      {{#if message}}
+        <p>{{message}}</p>
+      {{/if}}
     </div>
   </body>
 </html>

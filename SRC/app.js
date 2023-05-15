@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 
 // Set the views directory to 'views' and join it with the current directory (__dirname)
-app.set('views', path.join(__dirname, 'views'));
+app.set('views');
 
 // Set up middleware to parse URL-encoded request bodies
 app.use(express.urlencoded({ extended: false }))

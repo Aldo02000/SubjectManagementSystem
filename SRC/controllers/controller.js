@@ -30,11 +30,11 @@ function isAdmin(req, res, next) {
 }
 
 exports.index = (req, res) => {
-    res.render("index.ejs");
+    res.render('index', { layout: 'page' });
 }
 
 exports.login = (req, res) => {
-    res.render('login.ejs', { message: req.flash('error') });
+    res.render('login', { message: req.flash('error'), layout: 'page' });
 }
 
 exports.loginPost = (req, res, next) => {
@@ -55,13 +55,20 @@ exports.welcome = (req, res, next) => {
         return res.redirect('/admin');
     }
 
-    res.render("welcome.ejs", { username: req.user.NameOfUser, role: req.user.RoleOfUser });
+    if (req.user.RoleOfUser == "Student") {
+        res.render('student', {layout: 'page'});
+    }
+
+    if (req.user.RoleOfUser == "Professor") {
+        res.render('professor', {layout: 'page'});
+    }   
 };
 
+// { username: req.user.NameOfUser, role: req.user.RoleOfUser }
 
 
 exports.adduser = (req, res) => {
-    res.render('addUser');
+    res.render('addUser', { layout: 'admin' });
 }
 
 exports.find = (req, res, next) => {
@@ -70,7 +77,7 @@ exports.find = (req, res, next) => {
 
     connection.query('SELECT * FROM User WHERE NameOfUser LIKE ? OR Id LIKE ?', ['%' + searchTerm + '%', '%' + searchTerm + '%'], (err, results) => {
         if (!err) {
-            res.render('home', { results });
+            res.render('home', { results, layout: 'admin' });
         } else {
             console.log(err);
             next(err);
@@ -86,7 +93,7 @@ exports.admin = (req, res, next) => {
 
     connection.query('SELECT * FROM User', (err, results) => {
         if (!err) {
-            res.render('home', { results });
+            res.render('home', { results, layout: 'admin' });
         } else {
             console.log(err);
             next(err);
@@ -103,22 +110,22 @@ exports.adduserPost = (req, res) => {
     const saltRounds = 10;
 
     if (!ID || !fullName || !email || !password || !role) {
-        return res.render('addUser', { error: 'All fields are required' });
+        return res.render('addUser', { error: 'All fields are required', layout: 'admin' });
     }
 
     if (ID.length !== 6) {
-        return res.render('addUser', { error: 'ID must be exactly 6 characters' });
+        return res.render('addUser', { error: 'ID must be exactly 6 characters', layout: 'admin' });
     }
 
     const sql = 'SELECT * FROM User WHERE Id = ?';
     connection.query(sql, [ID], (err, results) => {
         if (err) {
             console.log(err);
-            return res.render('addUser', { error: 'Something went wrong' });
+            return res.render('addUser', { error: 'Something went wrong', layout: 'admin' });
         }
 
         if (results.length > 0) {
-            return res.render('addUser', { error: 'ID already exists' });
+            return res.render('addUser', { error: 'ID already exists', layout: 'admin' });
         }
 
         bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -128,10 +135,10 @@ exports.adduserPost = (req, res) => {
                 const sql = 'INSERT INTO User (Id, NameOfUser, Email, AccountPassword, RoleOfUser) VALUES (?, ?, ?, ?, ?)';
                 connection.query(sql, [ID, fullName, email, hash, role], (err, results) => {
                     if (!err) {
-                        res.render('addUser', { success: 'User added successfully' })
+                        res.render('addUser', { success: 'User added successfully', layout: 'admin' })
                     } else {
                         console.log(err);
-                        return res.render('addUser', { error: 'Something went wrong' });
+                        return res.render('addUser', { error: 'Something went wrong', layout: 'admin' });
                     }
                 })
             });
@@ -142,7 +149,7 @@ exports.adduserPost = (req, res) => {
 exports.edituser = (req, res) => {
     connection.query('SELECT * FROM User WHERE ID = ?', [req.params.ID], (err, results) => {
         if (!err) {
-            res.render('editUser', { results })
+            res.render('editUser', { results, layout: 'admin' })
         } else {
             console.log(err);
         }
@@ -154,11 +161,11 @@ exports.edituserPost = (req, res) => {
     const saltRounds = 10;
 
     if (!ID || !fullName || !email || !role) {
-        return res.render('editUser', { error: 'All fields are required' });
+        return res.render('editUser', { error: 'All fields are required', layout: 'admin' });
     }
 
     if (ID.length !== 6) {
-        return res.render('addUser', { error: 'ID must be exactly 6 characters' });
+        return res.render('addUser', { error: 'ID must be exactly 6 characters', layout: 'admin' });
     }
 
     bcrypt.genSalt(saltRounds, function (err, salt) {
@@ -186,10 +193,10 @@ exports.edituserPost = (req, res) => {
 
             connection.query(sql, values, (err, results) => {
                 if (!err) {
-                    res.render('editUser', { success: 'User updated successfully' })
+                    res.render('editUser', { success: 'User updated successfully', layout: 'admin' })
                 } else {
                     console.log(err);
-                    return res.render('editUser', { error: 'Something went wrong' });
+                    return res.render('editUser', { error: 'Something went wrong' , layout: 'admin' });
                 }
             })
         });
