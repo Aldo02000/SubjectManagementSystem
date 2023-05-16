@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const dotenv = require("dotenv");
+const dotenv = require('dotenv');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
 
@@ -37,37 +37,54 @@ exports.login = (req, res) => {
 }
 
 exports.loginPost = (req, res, next) => {
-    passport.authenticate('local', {
-        successRedirect: '/welcome',
-        failureRedirect: '/login',
-        failureFlash: true
-    })(req, res, next);
-}
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
 
-exports.welcome = (req, res, next) => {
+        if (!user) {
+            req.flash('error', info.message);
+            return res.redirect('/login');
+        }
+
+        // Authenticate the user and store user information in the session
+        req.login(user, (err) => {
+            if (err) {
+                return next(err);
+            }
+
+            // Authentication successful, generate the redirect URL with the user ID
+            const redirectURL = `/welcome/${user.Id}`;
+
+            // Redirect to the generated URL
+            return res.redirect(redirectURL);
+        });
+    })(req, res, next);
+};
+
+let showSection = false;
+
+exports.welcome = (req, res) => {
     if (!req.user) {
-        res.status(401).send('Unauthorized');
-        return;
+        return res.status(401).send('Unauthorized');
     }
 
-    if (req.user.RoleOfUser == "Admin") {
+    if (req.user.RoleOfUser === 'Admin') {
         return res.redirect('/admin');
     }
 
-    if (req.user.RoleOfUser == "Student") {
+    if (req.user.RoleOfUser === 'Student') {
         res.render('student', { name: req.user.NameOfUser, layout: 'page' });
     }
 
-    if (req.user.RoleOfUser == "Professor") {
+    if (req.user.RoleOfUser === 'Professor') {
         res.render('professor', { name: req.user.NameOfUser, layout: 'page' });
     }
 };
 
-exports.addParagraph = (req, res) => {
-    const newParagraph = 'THIS IS A NEW PARAGRAPH';
-    res.setHeader('Content-Type', 'text/plain');
-    res.send(newParagraph);
-};
+exports.addSection = (req, res) => {
+    res.json({ success: true });
+}
 
 exports.adduser = (req, res) => {
     res.render('addUser', { layout: 'admin' });
