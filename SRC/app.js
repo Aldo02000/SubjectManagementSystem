@@ -21,6 +21,7 @@ app.use(bodyParser.json());
 
 // Set the static file directory to 'views' and join it with the current directory (__dirname)
 app.use(express.static(path.join(__dirname, 'views')));
+app.use(express.static(path.join(__dirname)));
 
 // Set the view engine to handlebars (.hbs) and use the 'hbs' engine
 app.engine('hbs', exphbs.engine({ extname: '.hbs' }));
@@ -38,6 +39,7 @@ app.use(passport.session());
 // Initialize passport authentication and attach routes
 const { initPassport } = require('./passportConfig');
 initPassport();
+
 const routes = require('./routes/routes');
 app.use('/', routes);
 

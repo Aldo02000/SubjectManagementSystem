@@ -1,6 +1,5 @@
 const express = require('express');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
 const dotenv = require("dotenv");
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
@@ -30,11 +29,11 @@ function isAdmin(req, res, next) {
 }
 
 exports.index = (req, res) => {
-    res.render('index', { layout: 'page' });
+    res.render('index', { layout: 'main' });
 }
 
 exports.login = (req, res) => {
-    res.render('login', { message: req.flash('error'), layout: 'page' });
+    res.render('login', { message: req.flash('error'), layout: 'main' });
 }
 
 exports.loginPost = (req, res, next) => {
@@ -56,16 +55,19 @@ exports.welcome = (req, res, next) => {
     }
 
     if (req.user.RoleOfUser == "Student") {
-        res.render('student', {layout: 'page'});
+        res.render('student', { name: req.user.NameOfUser, layout: 'page' });
     }
 
     if (req.user.RoleOfUser == "Professor") {
-        res.render('professor', {layout: 'page'});
-    }   
+        res.render('professor', { name: req.user.NameOfUser, layout: 'page' });
+    }
 };
 
-// { username: req.user.NameOfUser, role: req.user.RoleOfUser }
-
+exports.addParagraph = (req, res) => {
+    const newParagraph = 'THIS IS A NEW PARAGRAPH';
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(newParagraph);
+};
 
 exports.adduser = (req, res) => {
     res.render('addUser', { layout: 'admin' });
@@ -196,7 +198,7 @@ exports.edituserPost = (req, res) => {
                     res.render('editUser', { success: 'User updated successfully', layout: 'admin' })
                 } else {
                     console.log(err);
-                    return res.render('editUser', { error: 'Something went wrong' , layout: 'admin' });
+                    return res.render('editUser', { error: 'Something went wrong', layout: 'admin' });
                 }
             })
         });

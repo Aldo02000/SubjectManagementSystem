@@ -14,6 +14,7 @@ router.get('/edituser/:ID', userController.edituser);
 router.post('/edituser/:ID', userController.edituserPost);
 router.get('/:ID', userController.delete);
 router.post('/admin', userController.find);
+router.post('/add-paragraph', userController.addParagraph);
 
 
 module.exports = router;
