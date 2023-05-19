@@ -1,18 +1,8 @@
 const express = require('express');
 const passport = require('passport');
-const dotenv = require('dotenv');
-const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const connection = require('../db');
 
-
-dotenv.config();
-
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
-});
 
 function isAdmin(req, res, next) {
     // Check if the user is authenticated
